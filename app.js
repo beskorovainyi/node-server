@@ -1,7 +1,9 @@
 const express = require('express');
 const chalk = require("chalk");
+const bodyParser = require("body-parser");
 const app = express()
 const port = 6000
+
 
 
 const server = app.listen(port, (error) => {
