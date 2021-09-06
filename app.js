@@ -6,6 +6,7 @@ const port = 6000
 const router = Router()
 
 router.get()
+router.get()
 
 const server = app.listen(port, (error) => {
   if (error) return (
