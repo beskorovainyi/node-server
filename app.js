@@ -1,9 +1,10 @@
 const express = require('express');
 const chalk = require("chalk");
 const bodyParser = require("body-parser");
-const app = express()
-const port = 6000
-const authRoutes = require('./routes/auth-routes');
+const app = express();
+const port = 8000;
+const authRoutes = require("./routes/auth-routes");
+const logger = require("./config/logger")
 
 
 app.use(bodyParser.json());
