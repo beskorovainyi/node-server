@@ -2,9 +2,10 @@ const express = require('express');
 const chalk = require("chalk");
 const bodyParser = require("body-parser");
 const app = express();
-const port = 8000;
+const port = 8080;
 const authRoutes = require("./routes/auth-routes");
-const logger = require("./config/logger")
+const corsMiddleweare = require('./middleweare/cors.middleweare')
+
 
 
 app.use(bodyParser.json());
@@ -13,6 +14,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static(__dirname + '/public'));
 
+app.use(corsMiddleweare)
 app.use('/', authRoutes);
 
 
