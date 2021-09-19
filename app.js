@@ -5,7 +5,7 @@ const app = express();
 const port = 8080;
 const authRoutes = require("./routes/auth-routes");
 const corsMiddleweare = require('./middleweare/cors.middleweare')
-
+const mongoose = require('mongoose')
 
 
 app.use(bodyParser.json());
@@ -15,7 +15,11 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(__dirname + '/public'));
 
 app.use(corsMiddleweare)
-app.use('/', authRoutes);
+app.use('/', authRoutes)
+
+mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, useUnifiedTopology: true}, () => {
+  console.log('connect to db')
+})
 
 
 const server = app.listen(port, (error) => {
