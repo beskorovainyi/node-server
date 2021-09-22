@@ -3,6 +3,9 @@ const router = require('express').Router();
 const logger = require('../config/logger')
 const {format} = require("winston");
 const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
+
+require('../modules/User')
 
 const User = mongoose.model('users')
 
@@ -20,8 +23,28 @@ router.get('/login', (req, res) => {
 });
 
 // auth with logout
-router.get('/logout', (req, res) => {
-  res.send('loggin out');
+router.post('/registration', async (req, res) => {
+
+  try {
+    const {email, password} = req.body
+    const candidate = User.findOne({email})
+
+    if (candidate) {
+     return res.status(400).json({message: `User with email ${email} already exist`})
+    }
+    const hashPassword = await bcrypt.hash(password, 15)
+
+    const user = new User({
+      email: email,
+      password: hashPassword
+    })
+     user.save()
+        .then(result => res.json({message: "User was created"}))
+        .catch(error => res.json(error))
+  } catch {
+    console.log(e)
+    res.send({message: "Server error"})
+  }
 });
 
 
