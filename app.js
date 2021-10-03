@@ -4,8 +4,10 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 8080;
 const authRoutes = require("./routes/auth-routes");
-const corsMiddleweare = require('./middleweare/cors.middleweare')
-const mongoose = require('mongoose')
+const registrationRoute = require("./routes/registration-route");
+const loginRoute = require("./routes/login-route")
+const corsMiddleweare = require('./middleweare/cors.middleweare');
+const mongoose = require('mongoose');
 
 
 
@@ -17,6 +19,10 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(corsMiddleweare)
 app.use('/', authRoutes)
+app.use('/', registrationRoute)
+app.use('/', loginRoute)
+
+
 
 mongoose.connect('mongodb://localhost/storage', {useNewUrlParser: true, useUnifiedTopology: true}, () => {
   console.log('connect to db')
