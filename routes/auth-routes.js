@@ -6,19 +6,18 @@ const bcrypt = require('bcryptjs')
 const {check, validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken')
 const config = require('config')
-const authMiddleweare = require('../middleweare/auth.middleweare')
+const authMiddleware = require('../middleware/auth.middleware')
 
-require('../modules/User')
-
+require('../models/User')
 const User = mongoose.model('users')
 
+router.get('/auth', authMiddleware,
 
-router.get('/auth', authMiddleweare,
     async (req, res) => {
-
       try {
         const user = await User.findOne({_id: req.user.id})
-        const token = jwt.sign({id: user.id}, config.get("secretKey"), {expiresIn: "1h"})
+        console.log(user)
+        const token = jwt.sign({id: user.id}, config.get('secretKey'), {expiresIn: "1h"})
         return res.json({message: "ok"})
       } catch (error) {
         res.send({message: "Server error"})

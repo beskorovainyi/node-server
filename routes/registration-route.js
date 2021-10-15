@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const mongoose = require('mongoose')
 const User = mongoose.model('users')
 
-require('../modules/User')
+require('../models/User')
 
 // registration user
 router.post('/registration', [

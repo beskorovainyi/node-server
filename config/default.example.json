@@ -1,9 +1,9 @@
 {
-  "port": 8080,
-  "mongoUri": "mongodb://localhost/storage",
+  "port": "number",
+  "mongoUri": "string",
   "jwt": {
-    "accessSecretKey": "secret-key",
-    "refreshSecretKey": "secret-key",
+    "accessSecretKey": "string",
+    "refreshSecretKey": "string",
     "tokens": {
       "access": {
         "type": "access",

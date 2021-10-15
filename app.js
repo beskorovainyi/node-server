@@ -1,14 +1,15 @@
 const express = require('express');
+const config = require('config')
 const chalk = require("chalk");
 const bodyParser = require("body-parser");
 const app = express();
-const port = 8080;
+const port = config.get('port') || 8080;
 const authRoutes = require("./routes/auth-routes");
 const registrationRoute = require("./routes/registration-route");
 const loginRoute = require("./routes/login-route")
-const corsMiddleweare = require('./middleweare/cors.middleweare');
+const corsMiddleware = require('./middleware/cors.middleware');
 const mongoose = require('mongoose');
-
+// const {config} = require("winston");
 
 
 app.use(bodyParser.json());
@@ -17,14 +18,13 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static(__dirname + '/public'));
 
-app.use(corsMiddleweare)
+app.use(corsMiddleware)
 app.use('/', authRoutes)
 app.use('/', registrationRoute)
 app.use('/', loginRoute)
 
 
-
-mongoose.connect('mongodb://localhost/storage', {useNewUrlParser: true, useUnifiedTopology: true}, () => {
+mongoose.connect(config.get('mongoUri'), {useNewUrlParser: true, useUnifiedTopology: true}, () => {
   console.log('connect to db')
 })
 

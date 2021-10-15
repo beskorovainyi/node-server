@@ -15,6 +15,8 @@ pids
 *.seed
 *.pid.lock
 
+#Docker
+Dockerfile
 
 # nyc test coverage
 .nyc_output
@@ -54,6 +56,6 @@ jspm_packages/
 # DynamoDB Local files
 .dynamodb/
 
-./config/keys.json
+./config/default.json
 
 .idea/
