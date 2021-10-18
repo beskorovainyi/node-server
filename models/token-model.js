@@ -1,7 +1,8 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const TokenSchema = new Schema({
-  refresh: String
+const TokenSchema = mongoose.Schema({
+  userId: String,
+  refreshToken: String,
 })
 
 module.exports = mongoose.model('token', TokenSchema)

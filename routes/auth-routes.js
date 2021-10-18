@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken')
 const config = require('config')
 const authMiddleware = require('../middleware/auth.middleware')
 
-require('../models/User')
+require('../models/user-model')
 const User = mongoose.model('users')
 
 router.get('/auth', authMiddleware,
