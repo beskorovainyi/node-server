@@ -9,7 +9,6 @@ const registrationRoute = require("./routes/registration-route");
 const loginRoute = require("./routes/login-route")
 const corsMiddleware = require('./middleware/cors.middleware');
 const mongoose = require('mongoose');
-// const {config} = require("winston");
 
 
 app.use(bodyParser.json());
