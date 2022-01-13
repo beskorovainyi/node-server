@@ -1,14 +1,16 @@
-const mongoose = require('mongoose')
-const User = mongoose.model('users')
-const Token = mongoose.model('token')
+const mongoose = require('mongoose');
+const User = mongoose.model('users');
+const Token = mongoose.model('token');
 const tokenService = require('../services/tokenService');
 const bcrypt = require('bcryptjs');
 const {error} = require("winston");
+const {v4: uuidv4} = require("uuid");
 
 
 const login = async (req, res) => {
 
   const {email, password} = req.body
+
 
   try {
 
@@ -25,10 +27,16 @@ const login = async (req, res) => {
     const access = tokenService.generateAccessToken({id: user.userId})
     const refresh = tokenService.generateRefreshToken({id: user.userId})
 
-    new Token({
+    const tokenId = uuidv4()
+
+    const token = new Token({
       userId: user.userId,
-      refresh: refresh
+      tokenId: tokenId
     })
+
+    token.save()
+        .then()
+        .catch()
 
     return res.json({
       access,

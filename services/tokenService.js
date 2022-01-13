@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken')
 const config = require('config')
 const mongoose = require('mongoose')
 const Token = mongoose.model("token")
-const User = mongoose.model('users')
 
 
 const generateAccessToken = (payload) => {
@@ -15,17 +14,19 @@ const generateRefreshToken = (payload) => {
 
 const replaceDbRefreshToken = (payload) => {
 
-  Token.findOneAndRemove({payload})
+  const {userId, tokenId} = payload
+
+  Token.findOneAndRemove({userId})
       .exec()
-      .then(result => console.log(result))
+      .then(() => Token.create({userId, tokenId}))
 }
 
 const validateAccessToken = (token) => {
   try {
     const result = jwt.verify(token, config.get("jwt.accessSecretKey"))
     return result
-  } catch (e) {
-    return null
+  } catch (error) {
+    return error
   }
 }
 
@@ -38,10 +39,18 @@ const validateRefreshToken = (token) => {
   }
 }
 
+const updateToken = (userId) => {
+  const access = generateAccessToken({id: userId})
+  const refresh = generateRefreshToken()
+  return replaceDbRefreshToken({userId})
+}
+
+
 module.exports = {
   generateRefreshToken,
   generateAccessToken,
   replaceDbRefreshToken,
   validateAccessToken,
-  validateRefreshToken
+  validateRefreshToken,
+  updateToken
 }

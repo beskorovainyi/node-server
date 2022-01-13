@@ -1,14 +1,23 @@
-const tokenService = require('../services/tokenService')
+const tokenService = require('../services/tokenService');
+const ApiError = require('../exceptions/api-error')
+const jwt = require('jsonwebtoken');
+const {instance} = require("schema/lib/validation");
 
 
 module.exports = (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(' ')[1]
-    if (!tokenService.validateAccessToken(token)) {
-      return res.status(404).json({message: "Token error"})
+    const accessToken = req.headers.authorization.split(' ')[1]
+    if (!accessToken) {
+      return next(ApiError.UnauthorizedError())
     }
-    next()
+
+    const isValid = tokenService.validateAccessToken(accessToken)
+
+    if (isValid instanceof jwt.TokenExpiredError) {
+      return next(ApiError.UnauthorizedError())
+    }
+    return next()
   } catch (e) {
-    return res.status(401).json({message: "Auth error"})
+    return next(ApiError.UnauthorizedError())
   }
 }
