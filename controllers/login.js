@@ -1,17 +1,16 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
-const Token = mongoose.model('token');
+const Token = mongoose.model('tokens');
 const tokenService = require('../services/tokenService');
 const bcrypt = require('bcryptjs');
 const {error} = require("winston");
 const {v4: uuidv4} = require("uuid");
+const {use} = require("express/lib/router");
 
 
 const login = async (req, res) => {
 
   const {email, password} = req.body
-
-
   try {
 
     const user = await User.findOne({email})
@@ -19,10 +18,18 @@ const login = async (req, res) => {
       return res.status(404).json({message: "User not found"})
     }
 
-    const isPassValid = bcrypt.compareSync(password, user.password)
-    if (!isPassValid) {
+    const isPasswordValid = bcrypt.compareSync(password, user.password)
+    if (!isPasswordValid) {
       return res.status(400).json({massage: "Invalid password"})
     }
+    //
+    // const isToken = await Token.findOne({userId: user.userId})
+    // if (user.userId === isToken.userId) {
+    //
+    //
+    //   tokenService.replaceDbRefreshToken(user.userId)
+    //   return res.status(200).json(isToken.tokenId)
+    // }
 
     const access = tokenService.generateAccessToken({id: user.userId})
     const refresh = tokenService.generateRefreshToken({id: user.userId})

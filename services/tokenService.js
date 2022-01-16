@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken')
 const config = require('config')
 const mongoose = require('mongoose')
-const Token = mongoose.model("token")
+const {v4: uuidv4} = require("uuid");
+const Token = mongoose.model("tokens")
 
 
 const generateAccessToken = (payload) => {
@@ -12,21 +13,30 @@ const generateRefreshToken = (payload) => {
   return jwt.sign(payload, config.get("jwt.refreshSecretKey"), {expiresIn: config.get("jwt.tokens.refresh.expiresIn")})
 }
 
-const replaceDbRefreshToken = (payload) => {
+const replaceDbRefreshToken = async (payload) => {
 
-  const {userId, tokenId} = payload
+  const userId = payload.id
 
-  Token.findOneAndRemove({userId})
-      .exec()
-      .then(() => Token.create({userId, tokenId}))
+  try {
+    const data = await Token.findOne({userId})
+    const tokenId = data.tokenId
+
+    await Token.findOneAndRemove({tokenId: tokenId})
+
+    const result = await updateToken(userId)
+    return result
+  } catch (e) {
+    return e
+  }
 }
 
 const validateAccessToken = (token) => {
   try {
-    const result = jwt.verify(token, config.get("jwt.accessSecretKey"))
+
+    const result =  jwt.verify(token, config.get("jwt.accessSecretKey"))
     return result
-  } catch (error) {
-    return error
+  } catch (e) {
+    return null
   }
 }
 
@@ -39,10 +49,27 @@ const validateRefreshToken = (token) => {
   }
 }
 
-const updateToken = (userId) => {
-  const access = generateAccessToken({id: userId})
-  const refresh = generateRefreshToken()
-  return replaceDbRefreshToken({userId})
+const updateToken = async (payload) => {
+  const userId = payload
+
+  try {
+    const access = generateAccessToken({id: userId})
+    const refresh = generateRefreshToken({id: userId})
+    const tokenId = uuidv4()
+
+    const token = new Token({
+      userId: userId,
+      tokenId: tokenId
+    })
+
+    await token.save()
+
+    return {access, refresh}
+  } catch (e) {
+    return e
+  }
+
+
 }
 
 

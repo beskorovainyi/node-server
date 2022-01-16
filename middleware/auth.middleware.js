@@ -1,8 +1,5 @@
 const tokenService = require('../services/tokenService');
-const ApiError = require('../exceptions/api-error')
-const jwt = require('jsonwebtoken');
-const {instance} = require("schema/lib/validation");
-
+const ApiError = require('../exceptions/api-error');
 
 module.exports = (req, res, next) => {
   try {
@@ -12,10 +9,10 @@ module.exports = (req, res, next) => {
     }
 
     const isValid = tokenService.validateAccessToken(accessToken)
-
-    if (isValid instanceof jwt.TokenExpiredError) {
-      return next(ApiError.UnauthorizedError())
+    if (!isValid) {
+      return res.status(401).json({message: "Token expired"})
     }
+
     return next()
   } catch (e) {
     return next(ApiError.UnauthorizedError())
