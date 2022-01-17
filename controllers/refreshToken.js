@@ -1,5 +1,4 @@
 const tokenService = require('../services/tokenService')
-const mongoose = require('mongoose')
 
 
 const refreshToken = async (req, res) => {
@@ -10,12 +9,20 @@ const refreshToken = async (req, res) => {
       return res.status(401).json({message: "Error auth"})
     }
 
+    const tokenFromDb = await tokenService.findRefreshToken(refreshToken)
     const isAuth = tokenService.validateRefreshToken(refreshToken)
-    if (!isAuth) {
+
+    if (!isAuth || !tokenFromDb) {
       return res.status(401).json({message: "Error auth"})
     }
 
-    const result = await tokenService.replaceDbRefreshToken(isAuth)
+    const userId = isAuth.id
+    const result = await tokenService.replaceDbRefreshToken(userId)
+
+    if (!result) {
+      return res.status(401).json({message: "Error auth"})
+    }
+
     return res.status(200).json(result)
   } catch (e) {
     return res.status(401).json({message: "Error auth"})

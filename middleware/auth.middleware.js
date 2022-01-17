@@ -9,6 +9,7 @@ module.exports = (req, res, next) => {
     }
 
     const isValid = tokenService.validateAccessToken(accessToken)
+
     if (!isValid) {
       return res.status(401).json({message: "Token expired"})
     }
